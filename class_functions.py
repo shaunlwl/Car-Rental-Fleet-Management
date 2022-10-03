@@ -15,3 +15,56 @@ def loadInitialData():
      {"License Plate Number": "MP003C", "Make": "Honda", "Model": "Odyssey", "Category": "MPV", "Status": "Available", "Outlet": "Outlet C"}]
 
     return outlet_data, car_data
+
+
+
+class car:
+
+    def __init__(self, license_plate_no, make, model, category, status, outlet) -> None:
+        self._license_plate_no = license_plate_no
+        self._make = make
+        self._model = model
+        self._category = category
+        self._status = status
+        self._outlet = outlet
+
+
+    def getLicensePlateNo(self):
+        return self._license_plate_no
+    
+    def setLicensePlateNo(self, license_plate_no):
+        self._license_plate_no = license_plate_no
+    
+    def getMake(self):
+        return self._make
+    
+    def setMake(self, make):
+        self._make = make
+
+    def getModel(self):
+        return self._model
+    
+    def setModel(self, model):
+        self._model = model
+
+    def getCategory(self):
+        return self._category
+    
+    def setCategory(self, category):
+        self._category = category
+
+    def getStatus(self):
+        return self._status
+    
+    def setStatus(self, status):
+        self._status = status
+    
+    def getOutlet(self):
+        return self._outlet
+    
+    def setOutlet(self, outlet):
+        self._outlet = outlet
+
+    
+    def addCar(self, license_plate_no, make, model, category, status, outlet):
+        pass

@@ -7,6 +7,7 @@ def main():
     #Initial data is loaded through the function below:
     outlet_data, car_data = cf.loadInitialData()
     car_list = [] # to store all the cars that the business owns
+    reservations_list = []
     for items in car_data:
         car_list.append(cf.car(items["License Plate Number"],items["Make"],items["Model"],items["Category"],items["Status"],items["Outlet"]))
  
@@ -17,15 +18,14 @@ def main():
             if user_choice_1 in ["1", "2", "3", "4", "5"]:
                 break
             else:
-                print("ERROR: You have entered an invalid selection, please try again""\n""")
+                print("ERROR: You have entered an invalid selection, Please try again""\n""")
 
         if user_choice_1 == "1": # Add Car
             cf.car.addCar(car_list)
-            print(len(car_list))
-            print(car_list)                
+            
 
         if user_choice_1 == "2": # Reserve Car
-            pass
+            cf.car.reserveCarCheck(car_list, reservations_list)
 
         if user_choice_1 == "3": # Allocate Car
             pass

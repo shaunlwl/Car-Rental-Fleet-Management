@@ -66,38 +66,52 @@ class car:
         self._outlet = outlet
 
     
-    def addCar(self, car_list):
+    def addCar(car_list):
         while True:
             new_car_input = input("Please input car details in the following format: License Plate No., Make, Model, Category, Status, Outlet""\n""Pls use commas to separate your inputs.""\n""").strip().split(",")
             new_car = []
-            license_plate_match = False
+            license_match = False
             if len(new_car_input) == 6:
                 for details in new_car_input:
-                    new_car.append(details.strip().lower())
+                    new_car.append(details.strip())
                 for cars in car_list:
-                    if new_car[0] == cars._license_plate_no:
-                        print("ERROR: License Plate number already exists, Please try again")
-                        license_plate_match = True
+                    if new_car[0].lower() == cars._license_plate_no.lower():
+                        license_match = True
+                        print("ERROR: License Plate number already exists")
                         break
-                if license_plate_match == True:
-                    continue
-                else:    
-                    if new_car[5] in ["outlet a", "outlet b", "outlet c"] and new_car[4] in ["available", "allocated", "pickup", "maintenance"] and new_car[3] in ["sedan", "suv", "mpv"]:
+                if license_match == True:
+                    while True:
+                        user_choice = input("Do you want to re-input car details? Y/N""\n""")
+                        if user_choice in ["Y", "N"]:
+                            break
+                        else:
+                            print("ERROR: you have entered an invalid input, Please try again ""\n""")
+                            continue
+                    if user_choice == "Y":
+                        continue
+                    else:
+                        return        
+
+                elif license_match == False:
+                    if new_car[5].lower() in ["outlet a", "outlet b", "outlet c"] and new_car[4].lower() in ["available", "allocated", "pickup", "maintenance"] and new_car[3].lower() in ["sedan", "suv", "mpv"]:
                         car_list.append(car(new_car[0],new_car[1],new_car[2],new_car[3],new_car[4],new_car[5]))
                         print(car_list[9]._license_plate_no)
                         break
-                    elif new_car[5] not in ["outlet a", "outlet b", "outlet c"]:
+                    elif new_car[5].lower() not in ["outlet a", "outlet b", "outlet c"]:
                         print("ERROR: You have entered an invalid input for Outlet, Please try again""\n""")
-                        continue
-                    elif new_car[4] not in ["available", "allocated", "pickup", "maintenance"]:
+                        break
+                    elif new_car[4].lower() not in ["available", "allocated", "pickup", "maintenance"]:
                         print("ERROR: You have entered an invalid input for Status, Please try again""\n""")
-                        continue
-                    elif new_car[3] not in ["sedan", "suv", "mpv"]:
+                        break
+                    elif new_car[3].lower() not in ["sedan", "suv", "mpv"]:
                         print("ERROR: You have entered an invalid input for Category, Please try again""\n""")
-                        continue
+                        break
             elif len(new_car_input) < 6:
                 print("ERROR: You have entered fewer car details than expected, Please try again""\n""")
                 continue
             else:
                 print("ERROR: You have entered more car details than expected, Please try again""\n""")
                 continue
+
+    def reserveCar(car_list):
+        pass

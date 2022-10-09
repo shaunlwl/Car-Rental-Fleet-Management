@@ -28,6 +28,11 @@ class car:
         self._category = category
         self._status = status
         self._outlet = outlet
+        if self._outlet.lower() in ["outlet a", "outlet b"]:
+            self._return_datetime = dt.datetime(2020, 1,1, hour= 9)
+        else:
+            self._return_datetime = dt.datetime(2020,1,1, hour= 8)
+        self._reserved_dates = []
 
 
     def getLicensePlateNo(self):
@@ -65,6 +70,10 @@ class car:
     
     def setOutlet(self, outlet):
         self._outlet = outlet
+    
+    def setReservedDates(self, list_of_dates):
+        for dates in list_of_dates:
+            self._reserved_dates.append(dates) 
 
     
     def addCar(car_list):
@@ -91,7 +100,7 @@ class car:
                     if user_choice == "Y":
                         continue
                     else:
-                        return        
+                        return  
 
                 elif license_match == False:
                     if new_car[5].lower() in ["outlet a", "outlet b", "outlet c"] and new_car[4].lower() in ["available", "allocated", "pickup", "maintenance"] and new_car[3].lower() in ["sedan", "suv", "mpv"]:
@@ -113,7 +122,7 @@ class car:
                 print("ERROR: You have entered more car details than expected, Please try again""\n""")
                 continue
 
-    def reserveCarCheck(car_list, reservations_list):
+    def reserveCarCheck(car_list):
         customer_input = input("Please input the following details (with commas separating each detail): Name, Car Category, Pickup date/time, Return date/time, Pickup Outlet, Return Outlet""\n""").strip().split(",")
         customer_input_details = []
         if len(customer_input) == 6:
@@ -121,68 +130,93 @@ class car:
                 customer_input_details.append(details.strip())
             if customer_input_details[1].lower() not in ["sedan", "suv", "mpv"]:
                 print("ERROR: You have entered an invalid input for Category, Please try again""\n""")
+                return None, None, None, None , None, None 
             elif customer_input_details[4].lower() not in ["outlet a", "outlet b", "outlet c"]:
                 print("ERROR: You have entered an invalid input for Pickup Outlet, Please try again""\n""")
+                return None, None, None, None , None, None 
             elif customer_input_details[5].lower() not in ["outlet a", "outlet b", "outlet c"]:
                 print("ERROR: You have entered an invalid input for Return Outlet, Please try again""\n""")
+                return None, None, None, None , None, None 
             else:
                 try:
                     customer_input_details[2] = dt.datetime.strptime(customer_input_details[2], '%d/%m/%y %H:%M')
                     customer_input_details[3] = dt.datetime.strptime(customer_input_details[3], '%d/%m/%y %H:%M')
                 except ValueError:
                     print("ERROR: You have entered an invalid date/time format, Please ensure it is entered as dd/mm/yy HH:MM""\n""")
+                    return None, None, None, None , None, None 
                 else:
                     pickup_outlet = customer_input_details[4].lower()
                     return_outlet = customer_input_details[5].lower()
                     pickup_time = customer_input_details[2].time()
+                    pickup_datetime = customer_input_details[2]
+                    return_datetime = customer_input_details[3]
                     return_time = customer_input_details[3].time()
                     category = customer_input_details[1].lower()
-                    pick_up_time_availability = False
-                    return_time_availability = False
-                    car_availability = False
+
                     if pickup_outlet in ["outlet a", "outlet b"]:
                         if pickup_time < dt.time(hour=9) or pickup_time > dt.time(hour=18):
-                            print("Car not available at that time")
-                            return
-                        else:
-                            pick_up_time_availability = True
+                            print("Not Available (Outside Outlet Operating Hours)")
+                            return None, None, None, None , None, None    
+
                     elif pickup_outlet in ["outlet c"]:
                         if pickup_time < dt.time(hour=8) or pickup_time > dt.time(hour=20):
-                            print("Car not available at that time")
-                            return
-                        else:
-                            pick_up_time_availability = True
+                            print("Not Available (Outside Outlet Operating Hours)")
+                            return None, None, None, None , None, None 
+
                     if return_outlet in ["outlet a", "outlet b"]:
                         if return_time < dt.time(hour=9) or return_time > dt.time(hour=18):
-                            print("Car not available at that time")
-                            return
-                        else:
-                            return_time_availability = True
+                            print("Not Available (Outside Outlet Operating Hours)")
+                            return None, None, None, None , None, None 
+
                     elif return_outlet in ["outlet c"]:
                         if return_time < dt.time(hour=8) or return_time > dt.time(hour=20):
-                            print("Car not available at that time")
-                            return
-                        else:
-                            return_time_availability = True
+                            print("Not Available (Outside Outlet Operating Hours)")
+                            return None, None, None, None , None, None 
+
                     potential_car_list = []
                     for cars in car_list:
-                        if category == cars._category and cars._status.lower() != "maintenance":
+                        if category == cars._category.lower() and cars._status.lower() != "maintenance":
                             potential_car_list.append(cars)
-                    for cars in potential_car_list:
-                        pass #check for which outlet it is at currently and if there are any current reservations?    
-                            
+                    if len(potential_car_list) == 0:
+                        print("Car not available")
+                        return None, None, None, None , None, None 
+                    else:
+                        filtered_car_list = []
+                        for cars in potential_car_list:
+                            if cars._outlet != pickup_outlet:
+                                pickup_datetime_edt = pickup_datetime - dt.timedelta(hours=2)
+                            if pickup_datetime_edt >= cars._return_datetime:
+                                filtered_car_list.append(cars)
+                        if len(filtered_car_list) == 0:
+                            print("Car not available")
+                            return None, None, None, None , None, None 
+                        else:
+                            cars_available_same_outlet = []
+                            cars_available_another_outlet = []
+                            for cars in filtered_car_list:
+                                if pickup_datetime.date() not in cars._reserved_dates:
+                                    if cars._outlet.lower() == pickup_outlet:
+                                        cars_available_same_outlet.append(cars)
+                                    else:
+                                        cars_available_another_outlet.append(cars)
+                            if len(cars_available_same_outlet) != 0:
+                                reserved_car = cars_available_same_outlet[0]
+                                rental_days = return_datetime - pickup_datetime
+                                return reserved_car, rental_days.total_seconds()/86400, pickup_datetime.date(), return_datetime.date(), pickup_outlet, return_outlet
 
+                            elif len(cars_available_another_outlet) != 0:
+                                reserved_car = cars_available_another_outlet[0]
+                                rental_days = return_datetime - pickup_datetime
+                                return reserved_car, rental_days.total_seconds()/86400, pickup_datetime.date(), return_datetime.date(), pickup_outlet, return_outlet
 
-
-                            
-
-                    
-                        
-
-
+                            else:
+                                print("Car not available")
+                                return None, None, None, None , None, None 
 
 
         elif len(customer_input)> 6:
             print("ERROR: You have entered more inputs then expected")
+            return None, None, None, None , None, None 
         else:
             print("ERROR: You have entered fewer inputs than expected")
+            return None, None, None, None , None, None 

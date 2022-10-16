@@ -1,5 +1,4 @@
 import datetime as dt
-from multiprocessing.sharedctypes import Value
 import class_functions as cf #own user-defined module
 
 
@@ -8,7 +7,7 @@ def main():
     #Initial data is loaded through the function below:
     outlet_data, car_data = cf.loadInitialData()
     car_list = [] # to store all the cars that the business owns
-    reservations_list = {}
+    reservations_list = []
     reservation_number = 1
     for items in car_data:
         car_list.append(cf.car(items["License Plate Number"],items["Make"],items["Model"],items["Category"],items["Status"],items["Outlet"]))
@@ -27,7 +26,7 @@ def main():
             
 
         if user_choice_1 == "2": # Reserve Car
-            reserved_car, rental_days, pickup_date, return_date, pickup_outlet, return_outlet = cf.car.reserveCarCheck(car_list)
+            reserved_car, rental_days, pickup_date, return_date, pickup_outlet, return_outlet, pickup_time, return_time = cf.car.reserveCarCheck(car_list, reservations_list)
             if isinstance(reserved_car, cf.car):
                 if rental_days % 1 == 0:
                     rental_days_rounded = rental_days
@@ -49,22 +48,12 @@ def main():
                     else:
                         print("ERROR: You have entered an invalid options, Please try again""\n""")
                 if user_confirmation == "Yes":
-                    list_of_dates = []
-                    pickup_date_loop = pickup_date
-                    
-                    while pickup_date_loop <= return_date:
-                        list_of_dates.append(pickup_date_loop)
-                        pickup_date_loop = pickup_date_loop + dt.timedelta(days=1)
-                    reserved_car.setReservedDates(list_of_dates)
-                    if pickup_date in reservations_list.keys():
-                        reservations_list[pickup_date].append({"Reservation no" : "#" + str(reservation_number), "Pickup Location":pickup_outlet, "License Plate": reserved_car.getLicensePlateNo(), "Source Outlet": reserved_car.getOutlet()})
-                        reservation_number += 1
-                    else:
-                        reservations_list[pickup_date] = [{"Reservation no" : "#" + str(reservation_number), "Pickup Location":pickup_outlet, "License Plate": reserved_car.getLicensePlateNo(), "Source Outlet": reserved_car.getOutlet()}]
-                        reservation_number += 1
-                    print(reservations_list)
+                    reservations_list.append({"Reservation Number": "#"+ str(reservation_number),"License Plate": reserved_car.getLicensePlateNo(), "Pickup Date": pickup_date, "Return Date": return_date,"Pickup Outlet": pickup_outlet ,"Return Outlet": return_outlet, "Pickup Time": pickup_time, "Return Time": return_time })
+                    reservation_number += 1
+                    print("Reservation Successful:""\n""")
+                    print("Reservation Number: " + reservations_list[-1]["Reservation Number"] + "\n","Pickup Outlet: " + reservations_list[-1]["Pickup Outlet"].upper() +"\n","Pickup Date: "+ str(reservations_list[-1]["Pickup Date"]) + "\n", "Pickup Time: " + str(reservations_list[-1]["Pickup Time"]), sep="" )
                 if user_confirmation == "No":
-                    print("Reservation not confirmed")
+                    print("Reservation not confirmed""\n""")
 
         if user_choice_1 == "3": # Allocate Car
             try:
@@ -76,11 +65,11 @@ def main():
 
 
         if user_choice_1 == "4": # Pickup Car
-            reservation_number = input("Please input reservation number""\n""")
+            reservation_number_input = input("Please input reservation number""\n""")
 
 
         if user_choice_1 == "5": # Return Car
-            reservation_number = input("Please input reservation number""\n""")
+            reservation_number_input = input("Please input reservation number""\n""")
         
         
         
@@ -96,19 +85,6 @@ def main():
         elif user_choice_3 == "No":
             break
             
-
-    
-
-
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == "__main__":

@@ -76,6 +76,7 @@ class car:
 
     
     def addCar(car_list):
+        '''This function appends a new car object to car_list, with 6 expected inputs given from user'''
         while True:
             new_car_input = input("Please input car details in the following format: License Plate No., Make, Model, Category, Status, Outlet""\n""Pls use commas to separate your inputs.""\n""").strip().split(",")
             new_car = []
@@ -90,13 +91,13 @@ class car:
                         break
                 if license_match == True:
                     while True:
-                        user_choice = input("Do you want to re-input car details? Y/N""\n""")
-                        if user_choice in ["Y", "N"]:
+                        user_choice = input("Do you want to re-input car details? Y/N""\n""").lower()
+                        if user_choice in ["y", "n"]:
                             break
                         else:
                             print("ERROR: you have entered an invalid input, Please try again ""\n""")
                             continue
-                    if user_choice == "Y":
+                    if user_choice == "y":
                         continue
                     else:
                         return  
@@ -123,6 +124,7 @@ class car:
                 continue
 
     def reserveCarCheck(car_list, reservations_list):
+        '''This function returns None if there are no available car for a given time period and car category, else it returns the first car object from the available car list'''
         customer_input = input("Please input the following details (with commas separating each detail): Name, Car Category, Pickup date/time, Return date/time, Pickup Outlet, Return Outlet""\n""").strip().split(",")
         customer_input_details = []
         if len(customer_input) == 6:

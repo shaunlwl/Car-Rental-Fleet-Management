@@ -43,12 +43,12 @@ def main():
             
                 print(f"Car available, Rental fee:${total_rent}")
                 while True:
-                    user_confirmation = input("Do you want to confirm reservation? Yes/No""\n""")
-                    if user_confirmation in ["Yes", "No"]:
+                    user_confirmation = input("Do you want to confirm reservation? Yes/No""\n""").lower()
+                    if user_confirmation in ["yes", "no"]:
                         break
                     else:
                         print("ERROR: You have entered an invalid options, Please try again""\n""")
-                if user_confirmation == "Yes":
+                if user_confirmation == "yes":
                     if pickup_date in reserved_car.getTransitStatus().keys():
                         reservations_list.append({"Reservation Number": "#"+ str(reservation_number),"License Plate": reserved_car.getLicensePlateNo(), "Pickup Date": pickup_date, "Return Date": return_date,"Pickup Outlet": pickup_outlet ,"Return Outlet": return_outlet, "Pickup Time": pickup_time, "Return Time": return_time, "Transit Outlet": reserved_car.getTransitStatus()[pickup_date] })
                         reservation_number += 1
@@ -57,7 +57,7 @@ def main():
                         reservation_number += 1
                     print("Reservation Successful:""\n""")
                     print("Reservation Number: " + reservations_list[-1]["Reservation Number"] + "\n","Pickup Outlet: " + reservations_list[-1]["Pickup Outlet"].upper() +"\n","Pickup Date: "+ str(reservations_list[-1]["Pickup Date"]) + "\n", "Pickup Time: " + str(reservations_list[-1]["Pickup Time"]) + "\n", sep="" )
-                if user_confirmation == "No":
+                if user_confirmation == "no":
                     print("Reservation not confirmed""\n""")
 
         
@@ -150,15 +150,15 @@ def main():
 
         
         while True:
-            user_choice_3 = input("Do you want to proceed with another action? Please input Yes or No""\n""")
-            if user_choice_3 in ["Yes", "No"]:
+            user_choice_3 = input("Do you want to proceed with another action? Please input Yes or No""\n""").lower()
+            if user_choice_3 in ["yes", "no"]:
                 break
             else:
                 print("ERROR: You have entered an invalid selection, please try again""\n""")
                 continue
-        if user_choice_3 == "Yes":
+        if user_choice_3 == "yes":
             continue
-        elif user_choice_3 == "No":
+        elif user_choice_3 == "no":
             break
             
 

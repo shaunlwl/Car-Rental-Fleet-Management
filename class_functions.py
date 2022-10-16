@@ -28,6 +28,7 @@ class car:
         self._category = category
         self._status = status
         self._outlet = outlet
+        self._requires_transit = {}
 
 
     def getLicensePlateNo(self):
@@ -69,6 +70,9 @@ class car:
     def setReservedDates(self, list_of_dates):
         for dates in list_of_dates:
             self._reserved_dates.append(dates) 
+
+    def getTransitStatus(self):
+        return self._requires_transit
 
     
     def addCar(car_list):
@@ -214,6 +218,7 @@ class car:
                                             if pickup_outlet == reservations["Return Outlet"].lower() and pickup_time >= reservations["Return Time"]:
                                                 continue
                                             elif pickup_outlet != reservations["Return Outlet"].lower() and (pickup_datetime - dt.timedelta(hours=2)).time() >= reservations["Return Time"]:
+                                                cars._requires_transit[pickup_datetime.date()] = reservations["Return Outlet"]
                                                 continue
                                             else:
                                                 car_available = False

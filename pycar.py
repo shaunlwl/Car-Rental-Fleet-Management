@@ -49,8 +49,12 @@ def main():
                     else:
                         print("ERROR: You have entered an invalid options, Please try again""\n""")
                 if user_confirmation == "Yes":
-                    reservations_list.append({"Reservation Number": "#"+ str(reservation_number),"License Plate": reserved_car.getLicensePlateNo(), "Pickup Date": pickup_date, "Return Date": return_date,"Pickup Outlet": pickup_outlet ,"Return Outlet": return_outlet, "Pickup Time": pickup_time, "Return Time": return_time })
-                    reservation_number += 1
+                    if pickup_date in reserved_car.getTransitStatus().keys():
+                        reservations_list.append({"Reservation Number": "#"+ str(reservation_number),"License Plate": reserved_car.getLicensePlateNo(), "Pickup Date": pickup_date, "Return Date": return_date,"Pickup Outlet": pickup_outlet ,"Return Outlet": return_outlet, "Pickup Time": pickup_time, "Return Time": return_time, "Transit Outlet": reserved_car.getTransitStatus()[pickup_date] })
+                        reservation_number += 1
+                    else:
+                        reservations_list.append({"Reservation Number": "#"+ str(reservation_number),"License Plate": reserved_car.getLicensePlateNo(), "Pickup Date": pickup_date, "Return Date": return_date,"Pickup Outlet": pickup_outlet ,"Return Outlet": return_outlet, "Pickup Time": pickup_time, "Return Time": return_time, "Transit Outlet": None })
+                        reservation_number += 1
                     print("Reservation Successful:""\n""")
                     print("Reservation Number: " + reservations_list[-1]["Reservation Number"] + "\n","Pickup Outlet: " + reservations_list[-1]["Pickup Outlet"].upper() +"\n","Pickup Date: "+ str(reservations_list[-1]["Pickup Date"]) + "\n", "Pickup Time: " + str(reservations_list[-1]["Pickup Time"]) + "\n", sep="" )
                 if user_confirmation == "No":
@@ -76,10 +80,18 @@ def main():
                                         car.setStatus("Pickup and Allocated") 
                                     else:
                                         car.setStatus("Allocated") 
+                            
                             if reservation_date not in allocation_dict.keys():
-                                allocation_dict[reservation_date] = [[reservations["Reservation Number"],reservations["Pickup Outlet"].upper(), reservations["License Plate"]]]
+                                if reservations["Transit Outlet"] != None:
+                                    allocation_dict[reservation_date] = [[reservations["Reservation Number"],reservations["Pickup Outlet"].upper(), reservations["License Plate"], "Transit from " + reservations["Transit Outlet"].upper()]]
+                                else:
+                                    allocation_dict[reservation_date] = [[reservations["Reservation Number"],reservations["Pickup Outlet"].upper(), reservations["License Plate"]]]
                             else:
-                                allocation_dict[reservation_date].append([reservations["Reservation Number"],reservations["Pickup Outlet"].upper(), reservations["License Plate"]])  
+                                
+                                if reservations["Transit Outlet"] != None:
+                                    allocation_dict[reservation_date].append([reservations["Reservation Number"],reservations["Pickup Outlet"].upper(), reservations["License Plate"], "Transit from " + reservations["Transit Outlet"].upper()])
+                                else:
+                                    allocation_dict[reservation_date].append([reservations["Reservation Number"],reservations["Pickup Outlet"].upper(), reservations["License Plate"]])  
                     
                     if reservation_date in allocation_dict.keys():                      
                         print("Allocated cars for " + str(reservation_date) + ":" +"\n")

@@ -28,11 +28,6 @@ class car:
         self._category = category
         self._status = status
         self._outlet = outlet
-        # if self._outlet.lower() in ["outlet a", "outlet b"]:
-        #     self._return_datetime = dt.datetime(2020, 1,1, hour= 9)
-        # else:
-        #     self._return_datetime = dt.datetime(2020,1,1, hour= 8)
-        # self._reserved_dates = []
 
 
     def getLicensePlateNo(self):

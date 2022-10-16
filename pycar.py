@@ -8,6 +8,7 @@ def main():
     outlet_data, car_data = cf.loadInitialData()
     car_list = [] # to store all the cars that the business owns
     reservations_list = []
+    allocation_dict = {}
     reservation_number = 1
     for items in car_data:
         car_list.append(cf.car(items["License Plate Number"],items["Make"],items["Model"],items["Category"],items["Status"],items["Outlet"]))
@@ -51,27 +52,90 @@ def main():
                     reservations_list.append({"Reservation Number": "#"+ str(reservation_number),"License Plate": reserved_car.getLicensePlateNo(), "Pickup Date": pickup_date, "Return Date": return_date,"Pickup Outlet": pickup_outlet ,"Return Outlet": return_outlet, "Pickup Time": pickup_time, "Return Time": return_time })
                     reservation_number += 1
                     print("Reservation Successful:""\n""")
-                    print("Reservation Number: " + reservations_list[-1]["Reservation Number"] + "\n","Pickup Outlet: " + reservations_list[-1]["Pickup Outlet"].upper() +"\n","Pickup Date: "+ str(reservations_list[-1]["Pickup Date"]) + "\n", "Pickup Time: " + str(reservations_list[-1]["Pickup Time"]), sep="" )
+                    print("Reservation Number: " + reservations_list[-1]["Reservation Number"] + "\n","Pickup Outlet: " + reservations_list[-1]["Pickup Outlet"].upper() +"\n","Pickup Date: "+ str(reservations_list[-1]["Pickup Date"]) + "\n", "Pickup Time: " + str(reservations_list[-1]["Pickup Time"]) + "\n", sep="" )
                 if user_confirmation == "No":
                     print("Reservation not confirmed""\n""")
 
+        
+        
         if user_choice_1 == "3": # Allocate Car
+            
             try:
                 reservation_date = dt.datetime.strptime(input("Please input reservation date in this format: dd/mm/yy""\n"""), '%d/%m/%y').date()
             except ValueError:
-                print("ERROR: You have entered an invalid date/time format, Please ensure it is entered as dd/mm/yy""\n""")
+                print("ERROR: You have entered an invalid date format, Please ensure it is entered as dd/mm/yy""\n""")
             else:
-                print(reservation_date)
+                if len(reservations_list) == 0:
+                    print("No allocation is required""\n""")
+                else:
+                    for reservations in reservations_list:
+                        if reservations["Pickup Date"] == reservation_date:
+                            for car in car_list:
+                                if car.getLicensePlateNo().lower() == reservations["License Plate"].lower():
+                                    if car.getStatus().lower() == "pickup":
+                                        car.setStatus("Pickup and Allocated") 
+                                    else:
+                                        car.setStatus("Allocated") 
+                            if reservation_date not in allocation_dict.keys():
+                                allocation_dict[reservation_date] = [[reservations["Reservation Number"],reservations["Pickup Outlet"].upper(), reservations["License Plate"]]]
+                            else:
+                                allocation_dict[reservation_date].append([reservations["Reservation Number"],reservations["Pickup Outlet"].upper(), reservations["License Plate"]])  
+                    
+                    if reservation_date in allocation_dict.keys():                      
+                        print("Allocated cars for " + str(reservation_date) + ":" +"\n")
+                        for items in allocation_dict[reservation_date]:
+                            print(items)
+                    else:
+                        print("No allocation is required")
 
-
+        
+        
         if user_choice_1 == "4": # Pickup Car
             reservation_number_input = input("Please input reservation number""\n""")
+            reservation_number_valid = False
+            for reservations in reservations_list:
+                if reservations["Reservation Number"] == reservation_number_input:
+                    reserved_car_plate_no = reservations["License Plate"].lower()
+                    reservation_number_valid = True
+                    break
+            if reservation_number_valid == True:
+                for car in car_list:
+                    if car.getLicensePlateNo().lower() == reserved_car_plate_no:
+                        if car.getStatus().lower() == "allocated":
+                            print(reserved_car_plate_no.upper())
+                            car.setStatus("Pickup")
+                        else:
+                            print("ERROR: Car has not been allocated")
+            else:
+                print("Error, Reservation number does not exist")
 
+            
+        
 
+        
+        
         if user_choice_1 == "5": # Return Car
             reservation_number_input = input("Please input reservation number""\n""")
+            reservation_number_valid = False
+            for reservations in reservations_list:
+                if reservations["Reservation Number"] == reservation_number_input:
+                    reserved_car_plate_no = reservations["License Plate"].lower()
+                    reservation_number_valid = True
+                    break
+            if reservation_number_valid == True:
+                for car in car_list:
+                    if car.getLicensePlateNo().lower() == reserved_car_plate_no:
+                        if car.getStatus().lower() == "allocated" or car.getStatus().lower() == "pickup":
+                            print(reserved_car_plate_no.upper())
+                            car.setStatus("Available")
+                        else:
+                            print("ERROR: Car has not been set to Allocated or Pickup")
+            else:
+                print("Error, Reservation number does not exist")
         
-        
+
+
+
         
         while True:
             user_choice_3 = input("Do you want to proceed with another action? Please input Yes or No""\n""")

@@ -49,12 +49,8 @@ def main():
                     else:
                         print("ERROR: You have entered an invalid options, Please try again""\n""")
                 if user_confirmation == "yes":
-                    if pickup_date in reserved_car.getTransitStatus().keys():
-                        reservations_list.append({"Reservation Number": "#"+ str(reservation_number),"License Plate": reserved_car.getLicensePlateNo(), "Pickup Date": pickup_date, "Return Date": return_date,"Pickup Outlet": pickup_outlet ,"Return Outlet": return_outlet, "Pickup Time": pickup_time, "Return Time": return_time, "Transit Outlet": reserved_car.getTransitStatus()[pickup_date] })
-                        reservation_number += 1
-                    else:
-                        reservations_list.append({"Reservation Number": "#"+ str(reservation_number),"License Plate": reserved_car.getLicensePlateNo(), "Pickup Date": pickup_date, "Return Date": return_date,"Pickup Outlet": pickup_outlet ,"Return Outlet": return_outlet, "Pickup Time": pickup_time, "Return Time": return_time, "Transit Outlet": None })
-                        reservation_number += 1
+                    reservations_list.append({"Reservation Number": "#"+ str(reservation_number),"License Plate": reserved_car.getLicensePlateNo(), "Pickup Date": pickup_date, "Return Date": return_date,"Pickup Outlet": pickup_outlet ,"Return Outlet": return_outlet, "Pickup Time": pickup_time, "Return Time": return_time, "Transit Outlet": reserved_car.getTransitStatus()[pickup_date] })
+                    reservation_number += 1
                     print("Reservation Successful:""\n""")
                     print("Reservation Number: " + reservations_list[-1]["Reservation Number"] + "\n","Pickup Outlet: " + reservations_list[-1]["Pickup Outlet"].upper() +"\n","Pickup Date: "+ str(reservations_list[-1]["Pickup Date"]) + "\n", "Pickup Time: " + str(reservations_list[-1]["Pickup Time"]) + "\n", sep="" )
                 if user_confirmation == "no":
@@ -119,7 +115,7 @@ def main():
                         else:
                             print("ERROR: Car has not been allocated")
             else:
-                print("Error, Reservation number does not exist")
+                print("ERROR: Reservation number does not exist")
 
             
         
@@ -143,7 +139,7 @@ def main():
                         else:
                             print("ERROR: Car has not been set to Allocated or Pickup")
             else:
-                print("Error, Reservation number does not exist")
+                print("ERROR: Reservation number does not exist")
         
 
 

@@ -67,14 +67,12 @@ class car:
     def setOutlet(self, outlet):
         self._outlet = outlet
     
-    def setReservedDates(self, list_of_dates):
-        for dates in list_of_dates:
-            self._reserved_dates.append(dates) 
-
     def getTransitStatus(self):
         return self._requires_transit
 
-    
+    def setTransitStatus(self, date, status):
+        self._requires_transit[date] = status
+
     def addCar(car_list):
         '''This function appends a new car object to car_list, with 6 expected inputs given from user'''
         while True:
@@ -125,7 +123,7 @@ class car:
 
     def reserveCarCheck(car_list, reservations_list):
         '''This function returns None if there are no available car for a given time period and car category, else it returns the first car object from the available car list'''
-        customer_input = input("Please input the following details (with commas separating each detail): Name, Car Category, Pickup date/time, Return date/time, Pickup Outlet, Return Outlet""\n""").strip().split(",")
+        customer_input = input("Please input the following details (with commas separating each detail): Name, Car Category, Pickup date/time in dd/mm/yy HH:MM, Return date/time in dd/mm/yy HH:MM, Pickup Outlet, Return Outlet""\n""").strip().split(",")
         customer_input_details = []
         if len(customer_input) == 6:
             for details in customer_input:
@@ -183,6 +181,8 @@ class car:
                         print("Car not available")
                         return None, None, None, None , None, None,None, None 
                     else:
+                        for cars in potential_car_list:
+                            cars.setTransitStatus(pickup_datetime.date(), None)
                         cars_available_same_outlet = []
                         cars_available_another_outlet = []
                         
@@ -199,6 +199,7 @@ class car:
                             
                             elif len(cars_available_another_outlet) != 0:
                                 reserved_car = cars_available_another_outlet[0]
+                                reserved_car.setTransitStatus(pickup_datetime.date(), reserved_car.getOutlet())
                                 rental_days = return_datetime - pickup_datetime
                                 return reserved_car, rental_days.total_seconds()/86400, pickup_datetime.date(), return_datetime.date(), pickup_outlet, return_outlet, pickup_time, return_time
 
